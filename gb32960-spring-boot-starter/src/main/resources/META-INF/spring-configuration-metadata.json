@@ -1,0 +1,212 @@
+{
+  "groups": [
+    {
+      "name": "gb32960",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties"
+    },
+    {
+      "name": "gb32960.server",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Server",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties",
+      "sourceMethod": "getServer()"
+    },
+    {
+      "name": "gb32960.auth",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Auth",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties",
+      "sourceMethod": "getAuth()"
+    },
+    {
+      "name": "gb32960.output",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Output",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties",
+      "sourceMethod": "getOutput()"
+    },
+    {
+      "name": "gb32960.output.kafka",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Kafka",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Output",
+      "sourceMethod": "getKafka()"
+    },
+    {
+      "name": "gb32960.output.rocketmq",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rocketmq",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Output",
+      "sourceMethod": "getRocketmq()"
+    },
+    {
+      "name": "gb32960.output.rabbitmq",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rabbitmq",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Output",
+      "sourceMethod": "getRabbitmq()"
+    },
+    {
+      "name": "gb32960.output.redis",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Redis",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Output",
+      "sourceMethod": "getRedis()"
+    },
+    {
+      "name": "gb32960.output.mqtt",
+      "type": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Mqtt",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Output",
+      "sourceMethod": "getMqtt()"
+    }
+  ],
+  "properties": [
+    {
+      "name": "gb32960.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable GB32960 auto-configuration.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties",
+      "defaultValue": true
+    },
+    {
+      "name": "gb32960.server.port",
+      "type": "java.lang.Integer",
+      "description": "TCP server port for vehicle terminal connections.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Server",
+      "defaultValue": 8600
+    },
+    {
+      "name": "gb32960.server.boss-threads",
+      "type": "java.lang.Integer",
+      "description": "Number of boss threads for the Netty server.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Server",
+      "defaultValue": 1
+    },
+    {
+      "name": "gb32960.server.worker-threads",
+      "type": "java.lang.Integer",
+      "description": "Number of worker threads for the Netty server (0 = auto).",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Server",
+      "defaultValue": 0
+    },
+    {
+      "name": "gb32960.auth.type",
+      "type": "java.lang.String",
+      "description": "Authentication type: none or whitelist.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Auth",
+      "defaultValue": "none"
+    },
+    {
+      "name": "gb32960.auth.whitelist",
+      "type": "java.util.List<java.lang.String>",
+      "description": "List of allowed VINs when auth type is whitelist.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Auth"
+    },
+    {
+      "name": "gb32960.callbacks",
+      "type": "java.lang.String[]",
+      "description": "SPI callback class names to register (empty = none).",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties"
+    },
+    {
+      "name": "gb32960.output.kafka.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Kafka output adapter.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Kafka",
+      "defaultValue": false
+    },
+    {
+      "name": "gb32960.output.kafka.topic",
+      "type": "java.lang.String",
+      "description": "Kafka topic for vehicle data output.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Kafka",
+      "defaultValue": "gb32960"
+    },
+    {
+      "name": "gb32960.output.rocketmq.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable RocketMQ output adapter.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rocketmq",
+      "defaultValue": false
+    },
+    {
+      "name": "gb32960.output.rocketmq.topic",
+      "type": "java.lang.String",
+      "description": "RocketMQ topic for vehicle data output.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rocketmq",
+      "defaultValue": "gb32960"
+    },
+    {
+      "name": "gb32960.output.rabbitmq.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable RabbitMQ output adapter.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rabbitmq",
+      "defaultValue": false
+    },
+    {
+      "name": "gb32960.output.rabbitmq.exchange",
+      "type": "java.lang.String",
+      "description": "RabbitMQ exchange for vehicle data output.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rabbitmq",
+      "defaultValue": "gb32960"
+    },
+    {
+      "name": "gb32960.output.rabbitmq.routing-key",
+      "type": "java.lang.String",
+      "description": "RabbitMQ routing key for vehicle data output.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Rabbitmq",
+      "defaultValue": ""
+    },
+    {
+      "name": "gb32960.output.redis.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Redis Stream output adapter.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Redis",
+      "defaultValue": false
+    },
+    {
+      "name": "gb32960.output.redis.stream-key",
+      "type": "java.lang.String",
+      "description": "Redis Stream key for vehicle data output.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Redis",
+      "defaultValue": "gb32960:stream"
+    },
+    {
+      "name": "gb32960.output.mqtt.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable MQTT output adapter.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Mqtt",
+      "defaultValue": false
+    },
+    {
+      "name": "gb32960.output.mqtt.topic",
+      "type": "java.lang.String",
+      "description": "MQTT topic for vehicle data output.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Mqtt",
+      "defaultValue": "gb32960"
+    },
+    {
+      "name": "gb32960.output.mqtt.broker-url",
+      "type": "java.lang.String",
+      "description": "MQTT broker URL.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Mqtt",
+      "defaultValue": "tcp://localhost:1883"
+    },
+    {
+      "name": "gb32960.output.mqtt.client-id-prefix",
+      "type": "java.lang.String",
+      "description": "MQTT client ID prefix.",
+      "sourceType": "io.github.xxx.gb32960.starter.properties.Gb32960Properties$Mqtt",
+      "defaultValue": "gb32960-output"
+    }
+  ],
+  "hints": [
+    {
+      "name": "gb32960.auth.type",
+      "values": [
+        {
+          "value": "none",
+          "description": "No authentication."
+        },
+        {
+          "value": "whitelist",
+          "description": "VIN whitelist authentication."
+        }
+      ]
+    }
+  ]
+}

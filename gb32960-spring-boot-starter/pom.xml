@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.xxx</groupId>
+        <artifactId>gb32960</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>gb32960-spring-boot-starter</artifactId>
+    <packaging>jar</packaging>
+    <name>GB32960 Spring Boot Starter</name>
+    <description>Spring Boot Starter for GB/T 32960-2016 Protocol SDK</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-callback</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-auth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-output-kafka</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-output-rocketmq</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-output-rabbitmq</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-output-redis-stream</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxx</groupId>
+            <artifactId>gb32960-output-mqtt</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>
