@@ -1,0 +1,35 @@
+spring.application.name=gb32960-example
+
+gb32960:
+  enabled: true
+  server:
+    port: 8600
+    boss-threads: 1
+    worker-threads: 0
+  auth:
+    type: none
+    whitelist: []
+  callbacks: []
+  output:
+    kafka:
+      enabled: false
+      topic: gb32960
+    rocketmq:
+      enabled: false
+      topic: gb32960
+    rabbitmq:
+      enabled: false
+      exchange: gb32960
+      routing-key: ""
+    redis:
+      enabled: false
+      stream-key: gb32960:stream
+    mqtt:
+      enabled: false
+      broker-url: tcp://localhost:1883
+      client-id-prefix: gb32960-output
+      topic: gb32960
+
+logging:
+  level:
+    io.github.xxx.gb32960: INFO
