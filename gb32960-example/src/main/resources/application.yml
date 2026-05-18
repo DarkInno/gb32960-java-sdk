@@ -1,4 +1,4 @@
-spring.application.name=gb32960-example
+spring.application.name: gb32960-example
 
 gb32960:
   enabled: true
@@ -32,4 +32,4 @@ gb32960:
 
 logging:
   level:
-    io.github.xxx.gb32960: INFO
+    io.github.darkinno.gb32960: INFO
