@@ -92,6 +92,21 @@ public class VehicleMonitorApp {
 | 0x07 | 终端→平台 | 心跳 | SUCCESS |
 | 0x08 | 平台→终端 | 终端校时 | SUCCESS + BCD时间 |
 
+### 加密
+
+| 类型 | 状态 |
+|------|------|
+| 0x01 NONE (明文) | ✅ |
+| 0x02 RSA (密钥交换) | ✅ (RsaCryptoProvider) |
+| 0x03 AES-128 (数据加密) | ✅ (AesCryptoProvider) |
+
+```yaml
+gb32960:
+  crypto:
+    type: aes            # none | aes
+    key: "<base64-encoded-128-bit-key>"
+```
+
 ### 数据信息类型
 
 | 类型 | 解析字段 | 状态 |
@@ -129,7 +144,7 @@ public class VehicleMonitorApp {
 | 车辆登入格式 | 31字节 | PASS |
 | 平台登入格式 | 41字节 | PASS |
 
-### 单元测试 (31 tests)
+### 单元测试 (71 个)
 
 | 测试类 | 数量 | 覆盖 |
 |--------|------|------|
@@ -137,6 +152,12 @@ public class VehicleMonitorApp {
 | MessageDecoderTest | 12 | 全部8种CMD解码、无效报文拒绝 |
 | MessageEncoderTest | 6 | 编解码往返、应答构建、VIN填充 |
 | VehicleSimulatorTest | 7 | 生命周期、并发、高吞吐、电池报警 |
+| NoopAuthProviderTest | 2 | 无认证通过 |
+| VinWhitelistAuthProviderTest | 7 | 白名单增删清查、认证 |
+| CompositeAuthProviderTest | 4 | 组合认证链、首个失败策略 |
+| ConnectionRateLimitProviderTest | 8 | 限流、封禁、线程安全、自定义参数 |
+| CallbackDispatcherTest | 11 | 全部8种回调、多注册、异步、容错 |
+| Gb32960AutoConfigurationTest | 6 | 属性绑定、Bean创建、服务启停 |
 
 ### 压力测试
 
@@ -187,24 +208,61 @@ public class VehicleMonitorApp {
 | 消息量 | 10,000 |
 | 解码成功率 | 100% |
 
-## 代码审查结果
+## 配置参考
 
-### 已修复 HIGH 级别问题 (5)
+| 属性 | 默认值 | 说明 |
+|------|--------|------|
+| `gb32960.enabled` | `true` | 启用 GB32960 自动配置 |
+| `gb32960.server.port` | `8600` | TCP 服务端口 |
+| `gb32960.server.boss-threads` | `1` | Netty boss 线程数 |
+| `gb32960.server.worker-threads` | `0` | Netty worker 线程数 (0=CPU核数) |
+| `gb32960.server.max-connections` | `100000` | 最大并发连接数 |
+| `gb32960.server.idle-timeout-seconds` | `300` | 空闲超时断开秒数 |
+| `gb32960.auth.type` | `none` | `none` \| `whitelist` \| `rate_limit` |
+| `gb32960.auth.whitelist` | `[]` | 白名单 VIN 列表 |
+| `gb32960.auth.rate-limit.max-attempts-per-second` | `3` | 限流阈值/秒 |
+| `gb32960.auth.rate-limit.ban-duration-seconds` | `60` | 超限后封禁秒数 |
+| `gb32960.crypto.type` | `none` | `none` \| `aes` |
+| `gb32960.crypto.key` | `""` | AES 密钥 (base64 编码) |
+| `gb32960.output.kafka.enabled` | `false` | 启用 Kafka 输出 |
+| `gb32960.output.kafka.topic` | `gb32960` | Kafka topic |
+| `gb32960.output.rocketmq.enabled` | `false` | 启用 RocketMQ 输出 |
+| `gb32960.output.rocketmq.topic` | `gb32960` | RocketMQ topic |
+| `gb32960.output.rabbitmq.enabled` | `false` | 启用 RabbitMQ 输出 |
+| `gb32960.output.rabbitmq.exchange` | `gb32960` | RabbitMQ exchange |
+| `gb32960.output.rabbitmq.routing-key` | `""` | RabbitMQ routing key |
+| `gb32960.output.redis.enabled` | `false` | 启用 Redis Stream 输出 |
+| `gb32960.output.redis.stream-key` | `gb32960:stream` | Redis Stream key |
+| `gb32960.output.mqtt.enabled` | `false` | 启用 MQTT 输出 |
+| `gb32960.output.mqtt.topic` | `gb32960` | MQTT topic 前缀 |
+| `gb32960.output.mqtt.broker-url` | `tcp://localhost:1883` | MQTT broker |
+| `gb32960.output.mqtt.client-id-prefix` | `gb32960-output` | MQTT client ID 前缀 |
 
-| 文件 | 问题 | 修复 |
-|------|------|------|
-| ConnectionRateLimitProvider | banMap 无界增长导致内存泄漏 | 过期条目惰性清理 |
-| ConnectionRateLimitProvider | null VIN 导致 CHM NPE | null/empty VIN 前置检查 |
-| CallbackDispatcher | 异步开关泄漏线程池 | 切换前关闭旧线程池 |
-| Gb32960AutoConfiguration | Spring 分派器被内部重建覆盖 | 注入外部分派器给 Config |
-| MqttOutputAdapter | topic 参数未使用 | 存入字段用于 MQTT 路径 |
+### 回调事件
 
-### 性能优化
+| 事件 | 触发条件 |
+|------|---------|
+| `onSessionConnected` | TCP 连接建立 |
+| `onSessionDisconnected` | TCP 连接关闭 |
+| `onVehicleLogin` | 车辆终端登入 |
+| `onVehicleLogout` | 车辆终端登出 |
+| `onRealtimeData` | 实时数据上报 |
+| `onHeartbeat` | 心跳消息 |
+| `onTimingResponse` | 校时应答 |
+| `onRawMessage` | 原始消息 (未解码或解码失败) |
 
-| 模块 | 优化 |
-|------|------|
-| RawMessage | isCommand/isSuccess/isError 使用无符号比较 `(b & 0xFF) == 0xFE` |
-| compiler | `--release 17` 替代 `-source/-target`，消除系统模块路径警告 |
+### 平台 API
+
+```java
+// 按 VIN 查找会话
+List<Gb32960Session> sessions = server.findSessionsByVin("VIN001");
+
+// 向指定车辆发送指令
+server.sendCommand("VIN001", encodedBytes);
+
+// 向所有已连接车辆广播
+server.broadcast(encodedBytes);
+```
 
 ## 构建
 

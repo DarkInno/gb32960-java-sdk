@@ -91,6 +91,21 @@ public class VehicleMonitorApp {
 | 0x07 | Terminal → Platform | Heartbeat | SUCCESS |
 | 0x08 | Platform → Terminal | Terminal Time Sync | SUCCESS + BCD Time |
 
+### Encryption
+
+| Type | Status |
+|------|--------|
+| 0x01 NONE (plain text) | ✅ |
+| 0x02 RSA (key exchange) | ✅ (RsaCryptoProvider) |
+| 0x03 AES-128 (data encryption) | ✅ (AesCryptoProvider) |
+
+```yaml
+gb32960:
+  crypto:
+    type: aes            # none | aes
+    key: "<base64-encoded-128-bit-key>"
+```
+
 ### Data Information Types
 
 | Info Type | Parsed Fields | Status |
@@ -128,7 +143,7 @@ Byte-by-byte verified against the GB/T 32960-2016 standard — **all 14 checks p
 | Vehicle Login Format | 31 bytes | PASS |
 | Platform Login Format | 41 bytes | PASS |
 
-### Unit Tests (31 tests)
+### Unit Tests (71 tests)
 
 | Test Class | Count | Coverage |
 |------------|-------|----------|
@@ -136,6 +151,12 @@ Byte-by-byte verified against the GB/T 32960-2016 standard — **all 14 checks p
 | MessageDecoderTest | 12 | All 8 CMD decoding, invalid message rejection |
 | MessageEncoderTest | 6 | Encode/decode roundtrip, response building, VIN padding |
 | VehicleSimulatorTest | 7 | Lifecycle, concurrency, high-throughput, battery alarms |
+| NoopAuthProviderTest | 2 | Always-pass auth |
+| VinWhitelistAuthProviderTest | 7 | Whitelist add/remove/clear/contains/auth |
+| CompositeAuthProviderTest | 4 | Composite auth chain, first-failure semantics |
+| ConnectionRateLimitProviderTest | 8 | Rate limit, ban, thread safety, custom limits |
+| CallbackDispatcherTest | 11 | All 8 callback types, multiple registrations, async, resilience |
+| Gb32960AutoConfigurationTest | 6 | Property binding, bean creation, server lifecycle |
 
 ### Stress Tests
 
@@ -186,24 +207,61 @@ Byte-by-byte verified against the GB/T 32960-2016 standard — **all 14 checks p
 | Message Count | 10,000 |
 | Decode Success Rate | 100% |
 
-## Code Review Results
+## Configuration Reference
 
-### Resolved HIGH-severity Issues (5)
+| Property | Default | Description |
+|----------|---------|-------------|
+| `gb32960.enabled` | `true` | Enable GB32960 auto-configuration |
+| `gb32960.server.port` | `8600` | TCP server port |
+| `gb32960.server.boss-threads` | `1` | Netty boss threads |
+| `gb32960.server.worker-threads` | `0` | Netty worker threads (0 = CPU count) |
+| `gb32960.server.max-connections` | `100000` | Maximum concurrent connections |
+| `gb32960.server.idle-timeout-seconds` | `300` | Idle timeout before disconnecting |
+| `gb32960.auth.type` | `none` | `none` \| `whitelist` \| `rate_limit` |
+| `gb32960.auth.whitelist` | `[]` | Allowed VIN list |
+| `gb32960.auth.rate-limit.max-attempts-per-second` | `3` | Rate limit threshold |
+| `gb32960.auth.rate-limit.ban-duration-seconds` | `60` | Ban duration after exceeding limit |
+| `gb32960.crypto.type` | `none` | `none` \| `aes` |
+| `gb32960.crypto.key` | `""` | AES key (base64 encoded) |
+| `gb32960.output.kafka.enabled` | `false` | Enable Kafka output |
+| `gb32960.output.kafka.topic` | `gb32960` | Kafka topic |
+| `gb32960.output.rocketmq.enabled` | `false` | Enable RocketMQ output |
+| `gb32960.output.rocketmq.topic` | `gb32960` | RocketMQ topic |
+| `gb32960.output.rabbitmq.enabled` | `false` | Enable RabbitMQ output |
+| `gb32960.output.rabbitmq.exchange` | `gb32960` | RabbitMQ exchange |
+| `gb32960.output.rabbitmq.routing-key` | `""` | RabbitMQ routing key |
+| `gb32960.output.redis.enabled` | `false` | Enable Redis Stream output |
+| `gb32960.output.redis.stream-key` | `gb32960:stream` | Redis Stream key |
+| `gb32960.output.mqtt.enabled` | `false` | Enable MQTT output |
+| `gb32960.output.mqtt.topic` | `gb32960` | MQTT topic prefix |
+| `gb32960.output.mqtt.broker-url` | `tcp://localhost:1883` | MQTT broker |
+| `gb32960.output.mqtt.client-id-prefix` | `gb32960-output` | MQTT client ID prefix |
 
-| File | Issue | Fix |
-|------|-------|-----|
-| ConnectionRateLimitProvider | Unbounded banMap growth → memory leak | Lazy eviction of expired entries |
-| ConnectionRateLimitProvider | Null VIN → ConcurrentHashMap NPE | Null/empty VIN pre-check |
-| CallbackDispatcher | Toggling async leaks thread pool | Shutdown old pool before switching |
-| Gb32960AutoConfiguration | Spring dispatcher overwritten by internal rebuild | Inject external dispatcher into Config |
-| MqttOutputAdapter | Topic parameter unused | Store in field for MQTT path |
+### Callback Events
 
-### Performance Optimizations
+| Event | Trigger |
+|-------|---------|
+| `onSessionConnected` | TCP connection established |
+| `onSessionDisconnected` | TCP connection closed |
+| `onVehicleLogin` | Vehicle terminal login |
+| `onVehicleLogout` | Vehicle terminal logout |
+| `onRealtimeData` | Real-time data report |
+| `onHeartbeat` | Heartbeat message |
+| `onTimingResponse` | Timing synchronization response |
+| `onRawMessage` | Raw (undecoded or decode-failed) message |
 
-| Module | Optimization |
-|--------|-------------|
-| RawMessage | Unsigned comparison `(b & 0xFF) == 0xFE` for isCommand/isSuccess/isError |
-| Compiler | `--release 17` replaces `-source/-target`, zero warnings |
+### Platform API
+
+```java
+// Find sessions by VIN
+List<Gb32960Session> sessions = server.findSessionsByVin("VIN001");
+
+// Send command to a specific vehicle
+server.sendCommand("VIN001", encodedBytes);
+
+// Broadcast to all connected vehicles
+server.broadcast(encodedBytes);
+```
 
 ## Build
 
