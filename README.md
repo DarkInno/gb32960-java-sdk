@@ -39,6 +39,25 @@ gb32960-java/
 </dependency>
 ```
 
+> Published to **GitHub Packages**. Configure `~/.m2/settings.xml`:
+>
+> ```xml
+> <server>
+>     <id>github</id>
+>     <username>YOUR_USERNAME</username>
+>     <password>YOUR_GITHUB_TOKEN</password>
+> </server>
+> ```
+>
+> And add the repository:
+>
+> ```xml
+> <repository>
+>     <id>github</id>
+>     <url>https://maven.pkg.github.com/DarkInno/gb32960-java-sdk</url>
+> </repository>
+> ```
+
 ### Configuration
 
 ```yaml

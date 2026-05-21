@@ -40,6 +40,25 @@ gb32960-java/
 </dependency>
 ```
 
+> 发布于 **GitHub Packages**。需配置 `~/.m2/settings.xml`：
+>
+> ```xml
+> <server>
+>     <id>github</id>
+>     <username>YOUR_USERNAME</username>
+>     <password>YOUR_GITHUB_TOKEN</password>
+> </server>
+> ```
+>
+> 并添加仓库地址：
+>
+> ```xml
+> <repository>
+>     <id>github</id>
+>     <url>https://maven.pkg.github.com/DarkInno/gb32960-java-sdk</url>
+> </repository>
+> ```
+
 ### 配置
 
 ```yaml
